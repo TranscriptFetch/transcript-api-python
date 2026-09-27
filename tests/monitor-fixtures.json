@@ -1,0 +1,302 @@
+{
+  "createMonitor": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor",
+      "id": "mon_m3k1x9qz4vb2p7",
+      "type": "channel",
+      "platform": "youtube",
+      "target": "@lexfridman",
+      "options": {
+        "tab": "videos"
+      },
+      "name": "Lex Fridman uploads",
+      "status": "active",
+      "has_new": true,
+      "last_event_id": "mev_m3k1xa0b7c8d9e",
+      "interval_minutes": 60,
+      "transcripts": true,
+      "webhook_url": "https://example.com/hooks/transcriptfetch",
+      "next_check_at": "2026-09-25T15:00:12.000Z",
+      "last_checked_at": null,
+      "last_error": null,
+      "created_at": "2026-09-24T09:12:40.000Z",
+      "updated_at": "2026-09-24T09:12:40.000Z",
+      "webhook_secret": "whsec_…",
+      "baseline_count": 30
+    },
+    "usage": {
+      "credits_spent": 0,
+      "balance": 250
+    }
+  },
+  "listMonitors": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor_list",
+      "has_new": true,
+      "last_event_id": "mev_m3k1xa0b7c8d9e",
+      "monitors": [
+        {
+          "kind": "monitor",
+          "id": "mon_m3k1x9qz4vb2p7",
+          "type": "channel",
+          "platform": "youtube",
+          "target": "@lexfridman",
+          "options": {
+            "tab": "videos"
+          },
+          "name": "Lex Fridman uploads",
+          "status": "active",
+          "has_new": true,
+          "last_event_id": "mev_m3k1xa0b7c8d9e",
+          "interval_minutes": 60,
+          "transcripts": true,
+          "webhook_url": "https://example.com/hooks/transcriptfetch",
+          "next_check_at": "2026-09-25T15:00:12.000Z",
+          "last_checked_at": "2026-09-25T14:00:09.000Z",
+          "last_error": null,
+          "created_at": "2026-09-24T09:12:40.000Z",
+          "updated_at": "2026-09-24T09:12:40.000Z"
+        }
+      ],
+      "limits": {
+        "max_monitors": 100,
+        "min_interval_minutes": 15
+      }
+    }
+  },
+  "getMonitor": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor",
+      "id": "mon_m3k1x9qz4vb2p7",
+      "type": "channel",
+      "platform": "youtube",
+      "target": "@lexfridman",
+      "options": {
+        "tab": "videos"
+      },
+      "name": "Lex Fridman uploads",
+      "status": "active",
+      "has_new": true,
+      "last_event_id": "mev_m3k1xa0b7c8d9e",
+      "interval_minutes": 60,
+      "transcripts": true,
+      "webhook_url": "https://example.com/hooks/transcriptfetch",
+      "next_check_at": "2026-09-25T15:00:12.000Z",
+      "last_checked_at": "2026-09-25T14:00:09.000Z",
+      "last_error": null,
+      "created_at": "2026-09-24T09:12:40.000Z",
+      "updated_at": "2026-09-24T09:12:40.000Z"
+    }
+  },
+  "updateMonitor": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor",
+      "id": "mon_m3k1x9qz4vb2p7",
+      "type": "channel",
+      "platform": "youtube",
+      "target": "@lexfridman",
+      "options": {
+        "tab": "videos"
+      },
+      "name": "Lex Fridman uploads",
+      "status": "paused",
+      "has_new": true,
+      "last_event_id": "mev_m3k1xa0b7c8d9e",
+      "interval_minutes": 60,
+      "transcripts": true,
+      "webhook_url": "https://example.com/hooks/transcriptfetch",
+      "next_check_at": null,
+      "last_checked_at": "2026-09-25T14:00:09.000Z",
+      "last_error": null,
+      "created_at": "2026-09-24T09:12:40.000Z",
+      "updated_at": "2026-09-25T14:20:00.000Z"
+    }
+  },
+  "deleteMonitor": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor_deleted",
+      "id": "mon_m3k1x9qz4vb2p7"
+    }
+  },
+  "listMonitorEvents": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor_event_list",
+      "monitor_id": "mon_m3k1x9qz4vb2p7",
+      "events": [
+        {
+          "id": "mev_m3k1xa0b7c8d9e",
+          "type": "monitor.videos",
+          "created_at": "2026-09-25T14:00:09.000Z",
+          "monitor": {
+            "id": "mon_m3k1x9qz4vb2p7",
+            "name": "Lex Fridman uploads",
+            "type": "channel",
+            "platform": "youtube",
+            "target": "@lexfridman"
+          },
+          "credits_spent": 2,
+          "data": {
+            "videos": [
+              {
+                "videoId": "dQw4w9WgXcQ",
+                "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "title": "Example video",
+                "duration": 212,
+                "channel": "Example Channel",
+                "publishedAt": "2026-09-25T13:00:00Z",
+                "stats": {
+                  "plays": 1200
+                }
+              }
+            ],
+            "transcripts": [
+              {
+                "video_id": "dQw4w9WgXcQ",
+                "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "outcome": "ok",
+                "transcript": {
+                  "kind": "transcript",
+                  "video_id": "dQw4w9WgXcQ",
+                  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                  "platform": "youtube",
+                  "title": "Example video",
+                  "channel": "Example Channel",
+                  "duration": 212,
+                  "language": "en",
+                  "thumbnail_url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+                  "source": "captions",
+                  "text": "We're no strangers to love …",
+                  "segments": [
+                    {
+                      "start": 0,
+                      "duration": 3.5,
+                      "text": "We're no strangers to love"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "delivery": {
+            "status": "delivered",
+            "attempts": 1,
+            "last_attempt_at": "2026-09-25T14:00:10.000Z",
+            "next_attempt_at": null,
+            "last_error": null,
+            "delivered_at": "2026-09-25T14:00:10.000Z"
+          }
+        }
+      ],
+      "next_cursor": "eyJ0IjoiNDIifQ"
+    }
+  },
+  "checkMonitor": {
+    "ok": true,
+    "request_id": "req_…",
+    "data": {
+      "kind": "monitor_check",
+      "monitor": {
+        "kind": "monitor",
+        "id": "mon_m3k1x9qz4vb2p7",
+        "type": "channel",
+        "platform": "youtube",
+        "target": "@lexfridman",
+        "options": {
+          "tab": "videos"
+        },
+        "name": "Lex Fridman uploads",
+        "status": "active",
+        "has_new": true,
+        "last_event_id": "mev_m3k1xa0b7c8d9e",
+        "interval_minutes": 60,
+        "transcripts": true,
+        "webhook_url": "https://example.com/hooks/transcriptfetch",
+        "next_check_at": "2026-09-25T15:00:21.000Z",
+        "last_checked_at": "2026-09-25T14:00:09.000Z",
+        "last_error": null,
+        "created_at": "2026-09-24T09:12:40.000Z",
+        "updated_at": "2026-09-24T09:12:40.000Z"
+      },
+      "new_videos": 1,
+      "event": {
+        "id": "mev_m3k1xa0b7c8d9e",
+        "type": "monitor.videos",
+        "created_at": "2026-09-25T14:00:09.000Z",
+        "monitor": {
+          "id": "mon_m3k1x9qz4vb2p7",
+          "name": "Lex Fridman uploads",
+          "type": "channel",
+          "platform": "youtube",
+          "target": "@lexfridman"
+        },
+        "credits_spent": 2,
+        "data": {
+          "videos": [
+            {
+              "videoId": "dQw4w9WgXcQ",
+              "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "title": "Example video",
+              "duration": 212,
+              "channel": "Example Channel",
+              "publishedAt": "2026-09-25T13:00:00Z",
+              "stats": {
+                "plays": 1200
+              }
+            }
+          ],
+          "transcripts": [
+            {
+              "video_id": "dQw4w9WgXcQ",
+              "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+              "outcome": "ok",
+              "transcript": {
+                "kind": "transcript",
+                "video_id": "dQw4w9WgXcQ",
+                "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "platform": "youtube",
+                "title": "Example video",
+                "channel": "Example Channel",
+                "duration": 212,
+                "language": "en",
+                "thumbnail_url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
+                "source": "captions",
+                "text": "We're no strangers to love …",
+                "segments": [
+                  {
+                    "start": 0,
+                    "duration": 3.5,
+                    "text": "We're no strangers to love"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "delivery": {
+          "status": "delivered",
+          "attempts": 1,
+          "last_attempt_at": "2026-09-25T14:00:10.000Z",
+          "next_attempt_at": null,
+          "last_error": null,
+          "delivered_at": "2026-09-25T14:00:10.000Z"
+        }
+      }
+    },
+    "usage": {
+      "credits_spent": 2,
+      "balance": 248
+    }
+  }
+}

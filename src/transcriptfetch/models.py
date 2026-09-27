@@ -7,7 +7,7 @@ still accepting the wire names on input.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -200,4 +200,127 @@ class BatchResponse(_Model):
 
     kind: Literal["transcript_batch"] = "transcript_batch"
     results: List[BatchResult] = Field(default_factory=list)
+    usage: Optional[Usage] = None
+
+
+# Monitor response models -----------------------------------------------------
+MonitorInterval = Literal[15, 60, 360, 1440]
+
+
+class MonitorSnapshot(_Model):
+    id: str
+    name: Optional[str] = None
+    type: str = "channel"
+    platform: str = "youtube"
+    target: str = ""
+
+
+class MonitorLastError(ApiErrorBlock):
+    at: Optional[str] = None
+
+
+class Monitor(MonitorSnapshot):
+    """A scheduled monitor. webhook_secret and baseline_count appear only on creation."""
+
+    kind: str = "monitor"
+    options: Dict[str, Any] = Field(default_factory=dict)
+    status: str = "active"
+    has_new: bool = False
+    last_event_id: Optional[str] = None
+    interval_minutes: int = 60
+    transcripts: bool = False
+    webhook_url: Optional[str] = None
+    next_check_at: Optional[str] = None
+    last_checked_at: Optional[str] = None
+    last_error: Optional[MonitorLastError] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    webhook_secret: Optional[str] = Field(default=None, repr=False)
+    baseline_count: Optional[int] = None
+    usage: Optional[Usage] = None
+
+
+class MonitorLimits(_Model):
+    max_monitors: Optional[int] = None
+    min_interval_minutes: int = 60
+
+
+class MonitorList(_Model):
+    kind: str = "monitor_list"
+    monitors: List[Monitor] = Field(default_factory=list)
+    has_new: bool = False
+    last_event_id: Optional[str] = None
+    limits: MonitorLimits = Field(default_factory=MonitorLimits)
+
+
+class MonitorDeleted(_Model):
+    kind: str = "monitor_deleted"
+    id: str
+
+
+class MonitorDelivery(_Model):
+    status: str = "none"
+    attempts: int = 0
+    last_attempt_at: Optional[str] = None
+    next_attempt_at: Optional[str] = None
+    last_error: Optional[str] = None
+    delivered_at: Optional[str] = None
+
+
+class MonitorTranscriptResult(_Model):
+    job_id: Optional[str] = None
+    video_id: str
+    url: str = ""
+    outcome: str
+    transcript: Optional[Transcript] = None
+    error: Optional[ApiErrorBlock] = None
+
+
+class MonitorVideosData(_Model):
+    videos: List[Video] = Field(default_factory=list)
+    transcripts: Optional[List[MonitorTranscriptResult]] = None
+
+
+class MonitorTranscriptData(MonitorTranscriptResult):
+    videos_event_id: str
+
+
+class MonitorVideosEvent(_Model):
+    id: str
+    type: Literal["monitor.videos"]
+    created_at: str
+    monitor: MonitorSnapshot
+    credits_spent: int = 0
+    data: MonitorVideosData
+    delivery: Optional[MonitorDelivery] = None
+
+
+class MonitorTranscriptEvent(_Model):
+    id: str
+    type: Literal["monitor.transcript"]
+    created_at: str
+    monitor: MonitorSnapshot
+    credits_spent: int = 0
+    data: MonitorTranscriptData
+    delivery: Optional[MonitorDelivery] = None
+
+
+MonitorEvent = Union[MonitorVideosEvent, MonitorTranscriptEvent]
+
+
+class MonitorEventList(_Model):
+    kind: str = "monitor_event_list"
+    monitor_id: str
+    events: List[MonitorEvent] = Field(default_factory=list)
+    next_cursor: Optional[str] = None
+
+
+class MonitorCheck(_Model):
+    """A check may return HTTP 200 with error set when the listing failed."""
+
+    kind: str = "monitor_check"
+    monitor: Monitor
+    new_videos: int = 0
+    event: Optional[MonitorEvent] = None
+    error: Optional[ApiErrorBlock] = None
     usage: Optional[Usage] = None

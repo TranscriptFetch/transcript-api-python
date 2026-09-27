@@ -77,6 +77,52 @@ pending = [r.job_id for r in res.results if r.outcome == "processing"]
 res = tf.transcripts.batch(ids, mode="captions")   # captions only, no audio fallback
 ```
 
+## Monitors (2.4.0+)
+
+Watch a YouTube channel or a TikTok/Instagram profile for new videos. Creation
+records a free baseline and starts scheduled checks; existing videos are skipped.
+Checks with no new videos are free. A check finding videos costs 1 credit, plus
+transcript charges when enabled. See [monitor docs](https://transcriptfetch.com/docs/monitors)
+for plan limits, audio billing, retention and webhook verification.
+
+```python
+with TranscriptFetch(timeout=120) as tf:
+    monitor = tf.monitors.create("@lexfridman", interval_minutes=60, transcripts=True)
+    # Save monitor.webhook_secret securely: it is only returned on creation.
+    # Optional webhook_url="https://your-app.com/hooks/transcriptfetch".
+    # YouTube only: tab="shorts" (or "videos" / "live").
+    all_monitors = tf.monitors.list()
+    news = tf.monitors.list(since=all_monitors.last_event_id)
+    current = tf.monitors.get(monitor.id)
+    page = tf.monitors.events(monitor.id, limit=10)
+    for event in tf.monitors.iter_events(monitor.id, since=current.last_event_id):
+        print(event.type, event.data)
+    tf.monitors.update(monitor.id, status="paused")
+    tf.monitors.update(monitor.id, webhook_url=None, name=None, transcripts=False)
+    # Omitted settings stay unchanged. None clears webhook_url/name.
+    tf.monitors.update(monitor.id, status="active")
+    checked = tf.monitors.check(monitor.id)  # may spend credits
+    if checked.error:  # listing failure, even with HTTP 200
+        print(checked.error)
+    tf.monitors.delete(monitor.id)  # removes events too
+```
+
+`AsyncTranscriptFetch` exposes the same methods with `await`; use `async for`
+with `tf.monitors.iter_events(...)`. Models use snake_case. `monitor.videos`
+events carry `data.videos` and optional `data.transcripts` with `ok`, `processing`
+or `error` outcomes. `monitor.transcript` events carry the follow-up result
+in `data`, linked to the parent via `videos_event_id`. `delivery` describes
+webhook attempts. Reading never marks events read: persist the latest event id
+and pass it as `since`. Iteration preserves `since` across cursor pages.
+Create/check accept `idempotency_key`; the generated key stays stable on retries.
+Use a longer client timeout for creation/manual checks, which read the platform.
+
+Single-video options are also supported:
+
+```python
+transcript = tf.transcripts.video("dQw4w9WgXcQ", mode="captions", timestamps=False)
+```
+
 ## Pagination
 
 List endpoints are cursor-paginated. Iterate every result without managing cursors:

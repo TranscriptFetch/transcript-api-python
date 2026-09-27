@@ -19,6 +19,7 @@ from ._transport import (
 )
 from .errors import APIConnectionError, APITimeoutError
 from .models import Account
+from .resources.monitors import Monitors
 from .resources.transcripts import Transcripts
 
 
@@ -45,6 +46,7 @@ class TranscriptFetch:
         self._http = http_client or httpx.Client(
             base_url=self._config.base_url, timeout=self._config.timeout
         )
+        self.monitors = Monitors(self)
         self.transcripts = Transcripts(self)
 
     def _request(

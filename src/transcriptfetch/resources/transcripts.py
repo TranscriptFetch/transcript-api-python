@@ -11,7 +11,7 @@ that ``video``/``batch`` accept as-is.
 
 from __future__ import annotations
 
-from typing import Any, AsyncIterator, Iterable, Iterator, Optional, Protocol
+from typing import Any, AsyncIterator, Iterable, Iterator, Literal, Optional, Protocol
 
 from .._transport import parse_usage as _usage
 from ..models import ApiErrorBlock, BatchResponse, Transcript, VideoList
@@ -103,7 +103,15 @@ class Transcripts:
     def __init__(self, client: _SyncRequester) -> None:
         self._c = client
 
-    def video(self, video: str, *, idempotency_key: Optional[str] = None) -> Transcript:
+    def video(
+        self,
+        video: str,
+        *,
+        mode: Optional[Literal["auto", "captions", "audio"]] = None,
+        timestamps: Optional[bool] = None,
+        callback_url: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> Transcript:
         """Fetch a single transcript (text + timestamped segments).
 
         ``video`` is a YouTube, TikTok or Instagram URL, a direct media file
@@ -115,7 +123,20 @@ class Transcripts:
         "processing"`` and a ``job_id`` to pass to :meth:`job`.
         """
         env = self._c._request(
-            "POST", _VIDEO, body={"video": video}, idempotent=True, idempotency_key=idempotency_key
+            "POST",
+            _VIDEO,
+            body={
+                k: v
+                for k, v in {
+                    "video": video,
+                    "mode": mode,
+                    "timestamps": timestamps,
+                    "callback_url": callback_url,
+                }.items()
+                if v is not None
+            },
+            idempotent=True,
+            idempotency_key=idempotency_key,
         )
         return _parse_transcript(env)
 
@@ -251,10 +272,31 @@ class AsyncTranscripts:
     def __init__(self, client: _AsyncRequester) -> None:
         self._c = client
 
-    async def video(self, video: str, *, idempotency_key: Optional[str] = None) -> Transcript:
+    async def video(
+        self,
+        video: str,
+        *,
+        mode: Optional[Literal["auto", "captions", "audio"]] = None,
+        timestamps: Optional[bool] = None,
+        callback_url: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> Transcript:
         """Fetch a single transcript. See :meth:`Transcripts.video`."""
         env = await self._c._request(
-            "POST", _VIDEO, body={"video": video}, idempotent=True, idempotency_key=idempotency_key
+            "POST",
+            _VIDEO,
+            body={
+                k: v
+                for k, v in {
+                    "video": video,
+                    "mode": mode,
+                    "timestamps": timestamps,
+                    "callback_url": callback_url,
+                }.items()
+                if v is not None
+            },
+            idempotent=True,
+            idempotency_key=idempotency_key,
         )
         return _parse_transcript(env)
 
