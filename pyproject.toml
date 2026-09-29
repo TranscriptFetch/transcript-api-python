@@ -31,8 +31,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://transcriptfetch.com"
 Documentation = "https://transcriptfetch.com/docs"
-Source = "https://github.com/TranscriptFetch/python-sdk"
-Issues = "https://github.com/TranscriptFetch/python-sdk/issues"
+Source = "https://github.com/TranscriptFetch/transcript-api-python"
+Issues = "https://github.com/TranscriptFetch/transcript-api-python/issues"
 
 [project.optional-dependencies]
 dev = [
