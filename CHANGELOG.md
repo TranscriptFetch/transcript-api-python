@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org).
 
+## [2.4.1] - 2026-10-02
+
+### Fixed
+
+- Monitor billing in the README and the `create` / `check` docstrings. Since
+  2026-10-01 every monitor check costs 1 credit whether or not it finds new
+  videos, and so does the read at creation that records what is already there;
+  a check whose listing fails stays free. The docs still described the old
+  rules (free baseline, free quiet checks). No code changes.
+
 ## [2.4.0] - 2026-09-27
 
 ### Added

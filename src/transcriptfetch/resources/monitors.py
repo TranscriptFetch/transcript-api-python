@@ -71,8 +71,9 @@ class Monitors:
     ) -> Monitor:
         """Create a scheduled monitor. Save webhook_secret: it is only returned here.
 
-        Baseline is free; existing videos are skipped. Checks finding new videos
-        cost credits. tab selects a YouTube uploads/Shorts/live feed only.
+        Creation reads the target once (1 credit) and skips the videos already
+        there. Every later check costs 1 credit whether or not it finds new
+        videos. tab selects a YouTube uploads/Shorts/live feed only.
         """
         body = {
             key: value
@@ -131,7 +132,7 @@ class Monitors:
         return MonitorDeleted.model_validate(env["data"])
 
     def check(self, monitor_id: str, *, idempotency_key: Optional[str] = None) -> MonitorCheck:
-        """Check now, even when paused. New videos cost credits. Inspect result.error."""
+        """Check now, even when paused: 1 credit, found or not. Inspect result.error."""
         env = self._c._request(
             "POST", _path(monitor_id) + "/check", idempotent=True, idempotency_key=idempotency_key
         )
@@ -187,8 +188,9 @@ class AsyncMonitors:
     ) -> Monitor:
         """Create a scheduled monitor. Save webhook_secret: it is only returned here.
 
-        Baseline is free; existing videos are skipped. Checks finding new videos
-        cost credits. tab selects a YouTube uploads/Shorts/live feed only.
+        Creation reads the target once (1 credit) and skips the videos already
+        there. Every later check costs 1 credit whether or not it finds new
+        videos. tab selects a YouTube uploads/Shorts/live feed only.
         """
         body = {
             key: value
@@ -249,7 +251,7 @@ class AsyncMonitors:
     async def check(
         self, monitor_id: str, *, idempotency_key: Optional[str] = None
     ) -> MonitorCheck:
-        """Check now, even when paused. New videos cost credits. Inspect result.error."""
+        """Check now, even when paused: 1 credit, found or not. Inspect result.error."""
         env = await self._c._request(
             "POST", _path(monitor_id) + "/check", idempotent=True, idempotency_key=idempotency_key
         )

@@ -80,10 +80,12 @@ res = tf.transcripts.batch(ids, mode="captions")   # captions only, no audio fal
 ## Monitors (2.4.0+)
 
 Watch a YouTube channel or a TikTok/Instagram profile for new videos. Creation
-records a free baseline and starts scheduled checks; existing videos are skipped.
-Checks with no new videos are free. A check finding videos costs 1 credit, plus
-transcript charges when enabled. See [monitor docs](https://transcriptfetch.com/docs/monitors)
-for plan limits, audio billing, retention and webhook verification.
+reads the target once to record what is already there (existing videos are
+skipped) and starts scheduled checks. Every check costs 1 credit whether or not
+it finds new videos, and so does that first read; caption transcripts cost 1
+credit more each when enabled. A check whose listing fails is free. See
+[monitor docs](https://transcriptfetch.com/docs/monitors) for plan limits, audio
+billing, retention and webhook verification.
 
 ```python
 with TranscriptFetch(timeout=120) as tf:
@@ -101,7 +103,7 @@ with TranscriptFetch(timeout=120) as tf:
     tf.monitors.update(monitor.id, webhook_url=None, name=None, transcripts=False)
     # Omitted settings stay unchanged. None clears webhook_url/name.
     tf.monitors.update(monitor.id, status="active")
-    checked = tf.monitors.check(monitor.id)  # may spend credits
+    checked = tf.monitors.check(monitor.id)  # 1 credit, found or not
     if checked.error:  # listing failure, even with HTTP 200
         print(checked.error)
     tf.monitors.delete(monitor.id)  # removes events too
