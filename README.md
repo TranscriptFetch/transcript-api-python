@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/TranscriptFetch/transcript-api-python/main/assets/logo.png" alt="TranscriptFetch" width="84" height="84" />
+</p>
+
 # TranscriptFetch Python SDK
 
 Official, typed Python client for the [TranscriptFetch](https://transcriptfetch.com) API: fetch transcripts as clean, structured data, plus channel, playlist and search listings across YouTube, TikTok and Instagram. Sync + async, fully type-hinted.
