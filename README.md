@@ -4,7 +4,7 @@
 
 # TranscriptFetch Python SDK
 
-Official, typed Python client for the [TranscriptFetch](https://transcriptfetch.com) API: fetch transcripts as clean, structured data, plus channel, playlist and search listings across YouTube, TikTok and Instagram. Sync + async, fully type-hinted.
+Official, typed Python client for the [TranscriptFetch](https://transcriptfetch.com/?utm_source=github&utm_medium=sdk&utm_campaign=transcript-api-python) API: fetch transcripts as clean, structured data, plus channel, playlist and search listings across YouTube, TikTok and Instagram. Sync + async, fully type-hinted.
 
 Transcripts come from **YouTube, TikTok, Instagram, or a direct media file URL** (mp3/mp4/wav and friends). Channel and playlist take a URL from any of those platforms and detect it; search is YouTube by default, or any of them via `platform=`.
 
@@ -34,7 +34,7 @@ Every transcript carries the same metadata whichever platform served it:
 seconds, `language`, `thumbnail_url` and `source` (`"captions"` or `"audio"`).
 A value the API could not determine is `None`, never missing.
 
-Get an API key (50 free credits) at <https://transcriptfetch.com/app>. One credit per successful fetch; failed/blocked/no-transcript requests are free.
+Get an API key (50 free credits) at <https://transcriptfetch.com/app?utm_source=github&utm_medium=sdk&utm_campaign=transcript-api-python>. One credit per successful fetch; failed/blocked/no-transcript requests are free.
 
 ## Endpoints
 
@@ -100,7 +100,7 @@ reads the target once to record what is already there (existing videos are
 skipped) and starts scheduled checks. Every check costs 1 credit whether or not
 it finds new videos, and so does that first read; caption transcripts cost 1
 credit more each when enabled. A check whose listing fails is free. See
-[monitor docs](https://transcriptfetch.com/docs/monitors) for plan limits, audio
+[monitor docs](https://transcriptfetch.com/docs/monitors?utm_source=github&utm_medium=sdk&utm_campaign=transcript-api-python) for plan limits, audio
 billing, retention and webhook verification.
 
 ```python
