@@ -194,3 +194,61 @@ def test_missing_api_key_raises(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("TRANSCRIPTFETCH_API_KEY", raising=False)
     with pytest.raises(ValueError):
         TranscriptFetch()
+
+
+CHUNKED_ENV = {
+    "ok": True,
+    "request_id": "req_chunks",
+    "data": {
+        "kind": "transcript",
+        "video_id": "abc",
+        "url": "https://www.youtube.com/watch?v=abc",
+        "platform": "youtube",
+        "title": "Example",
+        "text": "hello world",
+        "segments": [],
+        "markdown": "# Example\n\n[0:00](https://www.youtube.com/watch?v=abc&t=0s) hello world",
+        "chunks": [
+            {"index": 0, "text": "hello world", "start": 0.0, "end": 2.5,
+             "url": "https://www.youtube.com/watch?v=abc&t=0s", "tokens": 2},
+        ],
+    },
+}
+
+
+@respx.mock
+def test_video_sends_and_parses_llm_formats() -> None:
+    route = respx.post(f"{BASE}/api/v2/transcripts/video").mock(
+        return_value=httpx.Response(200, json=CHUNKED_ENV)
+    )
+    with _client() as tf:
+        t = tf.transcripts.video("abc", markdown=True, chunks={"max_tokens": 800})
+
+    body = json.loads(route.calls.last.request.content)
+    assert body == {"video": "abc", "markdown": True, "chunks": {"max_tokens": 800}}
+    assert t.markdown and t.markdown.startswith("# Example")
+    assert len(t.chunks) == 1
+    c = t.chunks[0]
+    assert (c.index, c.start, c.end, c.tokens) == (0, 0.0, 2.5, 2)
+    assert c.url == "https://www.youtube.com/watch?v=abc&t=0s"
+
+
+@respx.mock
+def test_video_omits_unset_formats_and_false_chunks() -> None:
+    route = respx.post(f"{BASE}/api/v2/transcripts/video").mock(
+        return_value=httpx.Response(200, json=VIDEO_ENV)
+    )
+    with _client() as tf:
+        t = tf.transcripts.video("abc", chunks=False)
+    assert json.loads(route.calls.last.request.content) == {"video": "abc"}
+    assert t.chunks == [] and t.markdown is None
+
+
+@respx.mock
+def test_batch_sends_chunks_true() -> None:
+    route = respx.post(f"{BASE}/api/v2/transcripts/batch").mock(
+        return_value=httpx.Response(200, json=BATCH_ENV)
+    )
+    with _client() as tf:
+        tf.transcripts.batch(["a", "b"], chunks=True)
+    assert json.loads(route.calls.last.request.content) == {"videoIds": ["a", "b"], "chunks": True}

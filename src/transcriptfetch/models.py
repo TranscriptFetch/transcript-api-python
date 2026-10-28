@@ -38,6 +38,24 @@ class Segment(_Model):
     speaker: Optional[int] = None
 
 
+class Chunk(_Model):
+    """One embedding-sized piece of a transcript (``chunks=`` on a request).
+
+    Pieces break between caption lines, never mid-word, and overlap the
+    previous piece slightly. ``start``/``end`` are seconds (``None`` when the
+    transcript has no timings); ``url`` opens the video at ``start`` on
+    YouTube and is the item's own link elsewhere; ``tokens`` is the piece's
+    size in OpenAI's o200k_base encoding.
+    """
+
+    index: int = 0
+    text: str = ""
+    start: Optional[float] = None
+    end: Optional[float] = None
+    url: Optional[str] = None
+    tokens: Optional[int] = None
+
+
 class Transcript(_Model):
     """A single video's transcript, from any supported source.
 
@@ -74,6 +92,12 @@ class Transcript(_Model):
     source: Optional[str] = None  # "captions" | "audio" (AI transcription); None on a 202
     text: Optional[str] = None
     segments: List[Segment] = Field(default_factory=list)
+    markdown: Optional[str] = None
+    """Set when the request asked for ``markdown=True``: title, channel, length
+    and link, then paragraphs that each open with a timestamp link."""
+    chunks: List[Chunk] = Field(default_factory=list)
+    """Set when the request asked for ``chunks``: the transcript in
+    embedding-sized pieces (see :class:`Chunk`). Empty otherwise."""
     usage: Optional[Usage] = None
     # Envelope-level fields, lifted onto the model so an async job round-trips
     # as one object (the API returns them beside ``data``, not inside it).
@@ -83,7 +107,7 @@ class Transcript(_Model):
     error: Optional["ApiErrorBlock"] = None
     """Why a job failed. Set only when ``status == "failed"``."""
 
-    @field_validator("segments", mode="before")
+    @field_validator("segments", "chunks", mode="before")
     @classmethod
     def _null_segments_to_list(cls, v: Any) -> Any:
         return v or []
@@ -188,6 +212,10 @@ class BatchResult(_Model):
     source: Optional[str] = None  # "captions" | "audio" on outcome "ok"
     text: Optional[str] = None
     segments: Optional[List[Segment]] = None
+    markdown: Optional[str] = None
+    """Set on ``outcome == "ok"`` when the batch asked for ``markdown=True``."""
+    chunks: Optional[List[Chunk]] = None
+    """Set on ``outcome == "ok"`` when the batch asked for ``chunks``."""
     job_id: Optional[str] = None
     """Set when ``outcome == "processing"``: the audio-transcription job that
     will deliver this entry."""

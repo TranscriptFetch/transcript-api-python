@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org).
 
+## [2.5.0] - 2026-10-28
+
+### Added
+
+- `markdown=` and `chunks=` on `transcripts.video()` and `transcripts.batch()`
+  (sync and async). `chunks=True`, or `{"max_tokens": 800, "overlap_tokens":
+  80}`, returns the transcript in pieces sized for an embedding model, each
+  with `start`, `end`, a `url` that opens the video at that moment, and its
+  token count (`Transcript.chunks`, typed as the new `Chunk`). `markdown=True`
+  returns a timestamped Markdown rendering (`Transcript.markdown`). Both are
+  free, and an audio-transcription job delivers them too. These are what the
+  LangChain and LlamaIndex integrations build on.
+
 ## [2.4.1] - 2026-10-02
 
 ### Fixed

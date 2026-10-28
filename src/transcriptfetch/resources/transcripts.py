@@ -11,7 +11,17 @@ that ``video``/``batch`` accept as-is.
 
 from __future__ import annotations
 
-from typing import Any, AsyncIterator, Iterable, Iterator, Literal, Optional, Protocol
+from typing import (
+    Any,
+    AsyncIterator,
+    Iterable,
+    Iterator,
+    Literal,
+    Optional,
+    Protocol,
+    TypedDict,
+    Union,
+)
 
 from .._transport import parse_usage as _usage
 from ..models import ApiErrorBlock, BatchResponse, Transcript, VideoList
@@ -23,6 +33,27 @@ _PLAYLIST = "/api/v2/transcripts/playlist"
 _SEARCH = "/api/v2/transcripts/search"
 _BATCH = "/api/v2/transcripts/batch"
 _JOB = "/api/v2/transcripts/jobs/{job_id}"
+
+
+class ChunkOptions(TypedDict, total=False):
+    """Sizes for ``chunks=``: ``max_tokens`` 100 to 2000 (default 500) and
+    ``overlap_tokens`` 0 to 200, smaller than ``max_tokens`` (default 50)."""
+
+    max_tokens: int
+    overlap_tokens: int
+
+
+Chunks = Union[bool, ChunkOptions]
+
+
+def _formats(markdown: Optional[bool], chunks: Optional[Chunks]) -> dict[str, Any]:
+    """The LLM-ready output options, only the ones set. Both are free."""
+    out: dict[str, Any] = {}
+    if markdown is not None:
+        out["markdown"] = markdown
+    if chunks is not None and chunks is not False:
+        out["chunks"] = dict(chunks) if isinstance(chunks, dict) else True
+    return out
 
 
 # ── Requester protocols (avoid importing the client → no circular import) ─────
@@ -109,6 +140,8 @@ class Transcripts:
         *,
         mode: Optional[Literal["auto", "captions", "audio"]] = None,
         timestamps: Optional[bool] = None,
+        markdown: Optional[bool] = None,
+        chunks: Optional[Chunks] = None,
         callback_url: Optional[str] = None,
         idempotency_key: Optional[str] = None,
     ) -> Transcript:
@@ -116,6 +149,12 @@ class Transcripts:
 
         ``video`` is a YouTube, TikTok or Instagram URL, a direct media file
         URL, or a bare YouTube ID.
+
+        ``markdown=True`` adds :attr:`~transcriptfetch.Transcript.markdown`;
+        ``chunks=True`` (or ``{"max_tokens": 800, "overlap_tokens": 80}``)
+        adds :attr:`~transcriptfetch.Transcript.chunks`, pieces sized for an
+        embedding model with a link to the moment each one starts. Both are
+        free, and an audio-transcription job delivers them too.
 
         When the source has no captions the API transcribes its audio and
         answers with a job instead: the returned
@@ -134,7 +173,8 @@ class Transcripts:
                     "callback_url": callback_url,
                 }.items()
                 if v is not None
-            },
+            }
+            | _formats(markdown, chunks),
             idempotent=True,
             idempotency_key=idempotency_key,
         )
@@ -204,6 +244,8 @@ class Transcripts:
         video_ids: Iterable[str],
         *,
         mode: Optional[str] = None,
+        markdown: Optional[bool] = None,
+        chunks: Optional[Chunks] = None,
         idempotency_key: Optional[str] = None,
     ) -> BatchResponse:
         """Fetch up to 50 transcripts in one call (same inputs as :meth:`video`).
@@ -225,6 +267,7 @@ class Transcripts:
         body: dict[str, Any] = {"videoIds": list(video_ids)}
         if mode is not None:
             body["mode"] = mode
+        body.update(_formats(markdown, chunks))
         env = self._c._request(
             "POST",
             _BATCH,
@@ -278,6 +321,8 @@ class AsyncTranscripts:
         *,
         mode: Optional[Literal["auto", "captions", "audio"]] = None,
         timestamps: Optional[bool] = None,
+        markdown: Optional[bool] = None,
+        chunks: Optional[Chunks] = None,
         callback_url: Optional[str] = None,
         idempotency_key: Optional[str] = None,
     ) -> Transcript:
@@ -294,7 +339,8 @@ class AsyncTranscripts:
                     "callback_url": callback_url,
                 }.items()
                 if v is not None
-            },
+            }
+            | _formats(markdown, chunks),
             idempotent=True,
             idempotency_key=idempotency_key,
         )
@@ -357,6 +403,8 @@ class AsyncTranscripts:
         video_ids: Iterable[str],
         *,
         mode: Optional[str] = None,
+        markdown: Optional[bool] = None,
+        chunks: Optional[Chunks] = None,
         idempotency_key: Optional[str] = None,
     ) -> BatchResponse:
         """Fetch up to 50 transcripts in one call. See :meth:`Transcripts.batch`
@@ -366,6 +414,7 @@ class AsyncTranscripts:
         body: dict[str, Any] = {"videoIds": list(video_ids)}
         if mode is not None:
             body["mode"] = mode
+        body.update(_formats(markdown, chunks))
         env = await self._c._request(
             "POST",
             _BATCH,

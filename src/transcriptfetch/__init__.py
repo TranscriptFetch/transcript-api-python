@@ -33,6 +33,7 @@ from .models import (
     ApiErrorBlock,
     BatchResponse,
     BatchResult,
+    Chunk,
     Monitor,
     MonitorCheck,
     MonitorDeleted,
@@ -56,6 +57,7 @@ from .models import (
     VideoList,
     VideoStats,
 )
+from .resources.transcripts import ChunkOptions
 
 __all__ = [
     "__version__",
@@ -80,6 +82,8 @@ __all__ = [
     # models
     "Usage",
     "Account",
+    "Chunk",
+    "ChunkOptions",
     "Segment",
     "Transcript",
     "Video",
