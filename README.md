@@ -81,6 +81,18 @@ pending = [r.job_id for r in res.results if r.outcome == "processing"]
 res = tf.transcripts.batch(ids, mode="captions")   # captions only, no audio fallback
 ```
 
+## Chunks and Markdown for RAG (2.5.0+)
+
+```python
+t = tf.transcripts.video("https://www.youtube.com/watch?v=aircAruvnKk", chunks=True, markdown=True)
+
+for c in t.chunks:                # embedding-sized pieces, split between caption lines
+    print(c.index, c.start, c.end, c.tokens, c.url)   # url opens the video at c.start
+print(t.markdown)                 # title, channel, length, then timestamped paragraphs
+```
+
+`chunks=True` uses 500-token pieces with a 50-token overlap; pass `{"max_tokens": 800, "overlap_tokens": 80}` to change them (100 to 2000, overlap 0 to 200). Both options are free, work on `batch()` too, and an audio-transcription job delivers them when it finishes. For LangChain and LlamaIndex, use `langchain-transcriptfetch` and `llama-index-readers-transcriptfetch`, which are built on these.
+
 ## Monitors (2.4.0+)
 
 Watch a YouTube channel or a TikTok/Instagram profile for new videos. Creation
